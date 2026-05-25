@@ -370,7 +370,7 @@ function isCollidingWithMap(x, y, w, h) {
 }
 
 function isCollidingWithTank(x, y, size, exclude) {
-  const allTanks = [player, ...enemies].filter(t => t !== exclude && t.alive);
+  const allTanks = [player, ...enemies].filter(t => t && t !== exclude && t.alive);
   for (const tank of allTanks) {
     const dx = x - tank.x;
     const dy = y - tank.y;
@@ -482,7 +482,7 @@ function moveBullet(b) {
   }
 
   // Hit enemy bullet -> player
-  if (b.owner !== player && player.alive) {
+  if (player && b.owner !== player && player.alive) {
     const dx = b.x - player.x, dy = b.y - player.y;
     if (Math.sqrt(dx * dx + dy * dy) < player.size + b.size) {
       b.alive = false;
@@ -542,7 +542,7 @@ function updateEnemyAI(enemy) {
   if (enemy.aiDirChange <= 0) {
     enemy.aiDirChange = 40 + Math.floor(Math.random() * 80);
     // Bias towards player
-    if (Math.random() < 0.4 && player.alive) {
+    if (Math.random() < 0.4 && player && player.alive) {
       const dx = player.x - enemy.x, dy = player.y - enemy.y;
       if (Math.abs(dx) > Math.abs(dy)) {
         enemy.dir = dx > 0 ? DIR.RIGHT : DIR.LEFT;
@@ -597,7 +597,7 @@ function drawMap() {
 }
 
 function drawTank(tank) {
-  if (!tank.alive) return;
+  if (!tank || !tank.alive) return;
 
   // Spawn flash effect
   if (tank.spawnFlash > 0) {
@@ -703,7 +703,7 @@ function update() {
   }
 
   // Player input
-  if (player.alive) {
+  if (player && player.alive) {
     let dx = 0, dy = 0;
     if (keys['ArrowUp'] || keys['w']) { dy = -player.speed; player.dir = DIR.UP; }
     else if (keys['ArrowDown'] || keys['s']) { dy = player.speed; player.dir = DIR.DOWN; }
