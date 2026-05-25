@@ -51,6 +51,36 @@
     font-size: 13px;
     letter-spacing: 2px;
   }
+  .canvas-container {
+    position: relative;
+  }
+  .start-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 14px 48px;
+    font-size: 22px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #1a1a2e;
+    background: #f9a825;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 4px;
+    box-shadow: 0 0 20px rgba(249,168,37,0.5);
+    transition: all 0.2s;
+    z-index: 10;
+  }
+  .start-btn:hover {
+    background: #ffb300;
+    box-shadow: 0 0 30px rgba(249,168,37,0.8);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  .start-btn.hidden {
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -65,7 +95,10 @@
       <div>剩余敌人: <span id="enemyCount">6</span></div>
     </div>
   </div>
-  <canvas id="gameCanvas"></canvas>
+  <div class="canvas-container">
+    <canvas id="gameCanvas"></canvas>
+    <button class="start-btn" id="startBtn" onclick="handleStart()">开始游戏</button>
+  </div>
   <div class="controls">⬆⬇⬅➡ 移动 &nbsp;|&nbsp; 空格 射击 &nbsp;|&nbsp; R 重新开始 &nbsp;|&nbsp; P 暂停</div>
 </div>
 
@@ -226,6 +259,12 @@ class Bullet {
   }
 }
 
+function handleStart() {
+  if (gameState === 'waiting' || gameState === 'over') {
+    startGame();
+  }
+}
+
 // --- Init ---
 function startGame() {
   score = 0;
@@ -234,6 +273,7 @@ function startGame() {
   loadLevel(currentLevel);
   updateUI();
   gameState = 'playing';
+  document.getElementById('startBtn').classList.add('hidden');
 }
 
 function loadLevel(lvl) {
@@ -455,6 +495,8 @@ function moveBullet(b) {
         updateUI();
         if (lives <= 0) {
           gameState = 'over';
+          document.getElementById('startBtn').classList.remove('hidden');
+          document.getElementById('startBtn').textContent = '重新开始';
         } else {
           respawnPlayer();
         }
@@ -724,9 +766,9 @@ function render() {
   drawTank(player);
 
   if (gameState === 'waiting') {
-    drawOverlay('坦 克 大 战', '按 空格键 开始游戏');
+    drawOverlay('坦 克 大 战', '');
   } else if (gameState === 'over') {
-    drawOverlay('游 戏 结 束', `最终得分: ${score} | 按 R 重新开始`);
+    drawOverlay('游 戏 结 束', `最终得分: ${score}`);
   } else if (gameState === 'paused') {
     drawOverlay('暂 停', '按 P 继续');
   }
