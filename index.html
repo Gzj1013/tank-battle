@@ -280,10 +280,10 @@ function loadLevel(lvl) {
   const data = getLevelData(lvl);
   map = data.map;
 
-  // Place player at bottom center
+  // Place player at bottom center (above bottom border wall)
   player = new Tank(
     Math.floor(COLS / 2) * TILE_SIZE + TILE_SIZE / 2,
-    (ROWS - 1) * TILE_SIZE + TILE_SIZE / 2,
+    (ROWS - 2) * TILE_SIZE + TILE_SIZE / 2,
     DIR.UP, '#4caf50', PLAYER_SPEED, 3
   );
 
@@ -304,8 +304,8 @@ function loadLevel(lvl) {
 function spawnNextEnemy() {
   if (spawnQueue.length === 0) return;
 
-  // Spawn at random top positions
-  const cols = [1, 6, 12, 18];
+  // Spawn at random top positions (avoid border walls)
+  const cols = [2, 6, 11, 16];
   const col = cols[Math.floor(Math.random() * cols.length)];
   const data = spawnQueue.shift();
   const x = col * TILE_SIZE + TILE_SIZE / 2;
@@ -522,7 +522,7 @@ function respawnPlayer() {
   player.alive = true;
   player.hp = 3;
   player.x = Math.floor(COLS / 2) * TILE_SIZE + TILE_SIZE / 2;
-  player.y = (ROWS - 1) * TILE_SIZE + TILE_SIZE / 2;
+  player.y = (ROWS - 2) * TILE_SIZE + TILE_SIZE / 2;
   player.dir = DIR.UP;
 }
 
